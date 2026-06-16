@@ -1,20 +1,16 @@
 # cofiswarm-mode-flat
 
-Cofiswarm component: `mode-flat`.
+Mode plugin service (flat) — HTTP execute endpoint for `cofiswarm-dispatch`.
 
-- Layout: [REPO-STANDARD-LAYOUT](https://github.com/keepdevops/cofiswarmdev/blob/main/docs/REPO-STANDARD-LAYOUT.md)
-- Migration: [MIGRATION-SPRINTS](https://github.com/keepdevops/cofiswarmdev/blob/main/docs/MIGRATION-SPRINTS.md)
+- SDK: [cofiswarm-mode-sdk](../cofiswarm-mode-sdk)
+- Legacy C++: `legacy/cpp/`
+- Config gate: `dispatch_url` + `slot_manager_url` in `test/standalone/etc/cofiswarm/mode-flat/mode-flat.yaml`
 
-## FHS paths
-
-| Path | Purpose |
-|------|---------|
-| `/etc/cofiswarm/mode-flat/` | config |
-| `/var/lib/cofiswarm/mode-flat/` | state |
-| `/var/log/cofiswarm/mode-flat/` | logs |
-
-## Test
+## Run
 
 ```bash
-./test/scripts/assert-layout.sh mode-flat
+make build
+./bin/cofiswarm-mode-flat -config test/standalone/etc/cofiswarm/mode-flat/mode-flat.yaml
 ```
+
+Default listen: `:8021`
