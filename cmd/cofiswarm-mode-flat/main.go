@@ -12,6 +12,7 @@ import (
 
 	"github.com/keepdevops/cofiswarm-mode-flat/internal/bus"
 	"github.com/keepdevops/cofiswarm-mode-sdk/pkg/mode"
+	"github.com/keepdevops/cofiswarm-observer-sdk/pkg/buspresence"
 	"github.com/keepdevops/cofiswarm-observer-sdk/pkg/servicecomponent"
 )
 
@@ -56,6 +57,11 @@ func main() {
 		}
 	}
 
+	// Carrier presence (broker-free, default-off via COFISWARM_BRIDGE_URL): appear in the
+	// observer live roster over the zmq-bridge without needing a NATS broker. HTTP /healthz
+	// + /v1/info remain the request/reply surface.
+	stopPresence := buspresence.StartPresence(os.Getenv("COFISWARM_BRIDGE_URL"), "mode-"+modeName, map[string]any{"name": "mode-" + modeName})
+
 	httpSrv := &http.Server{Addr: addr, Handler: srv.Handler()}
 	go func() {
 		log.Printf("mode-%s listening on %s", modeName, addr)
@@ -72,6 +78,7 @@ func main() {
 	if comp != nil {
 		comp.Shutdown() // goodbye -> offline
 	}
+	stopPresence() // carrier goodbye -> offline
 	shutCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := httpSrv.Shutdown(shutCtx); err != nil {
